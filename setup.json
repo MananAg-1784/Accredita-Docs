@@ -1,0 +1,10 @@
+{
+    "timezone":"Asia/Kolkata",
+    "domain":"gamil.com",
+    "auth_redirect":"http://localhost:5000/callback",
+    "admin_email" : "Aministrator email for the app",
+    "cloud_email": "Email used in OAuth Creds",
+    "creds": 
+    {
+    }
+}
