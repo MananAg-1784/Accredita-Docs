@@ -8,7 +8,7 @@ This web application focuses on efficient document classification and retrieval 
 1. Clone the repository:
 
     ```bash
-  
+    https://github.com/MananAg-1784/Accredita-Docs.git
     ```
 
 2. Install the required dependencies using pip and the provided requirements file:
@@ -27,8 +27,8 @@ This web application focuses on efficient document classification and retrieval 
 
 ## Usage
 
-  Open the terminal in the same directory as the run.py
-  
-  ```bash
-  python -m run
-  ```
+Open the terminal in the same directory as the run.py
+
+```bash
+python -m run
+```
