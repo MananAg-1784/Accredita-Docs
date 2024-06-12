@@ -1,7 +1,12 @@
 ## Accredita-Docs
-This web application focuses on efficient document classification and retrieval through a user-friendly interface for college departments. It seamlessly integrates with existing storage solutions by using Google Drive API, ensuring data security
+This web application focuses on efficient document classification and retrieval through a user-friendly interface for college departments. It seamlessly integrates with existing storage solutions by using Google Drive API, ensuring data security and reliability.
 
 ## Features
+* **User management** : Manage department teachers and access to various roles
+* **Administrative updates** : Updating and managing users, files, folders, etc.
+* **Document Classification and Storage** : Stores and classifies files in an organised manner that specify files content
+* **File Management** : Upload and track activities of all files
+* **Serach and Retrieval** : Filters and classifies files based on criteria's 
 
 ## Installation
 
@@ -26,6 +31,10 @@ This web application focuses on efficient document classification and retrieval 
 5. Change the Api Secret Key
 
 ## Usage
+
+## License
+
+## Contact 
 
 Open the terminal in the same directory as the run.py
 
