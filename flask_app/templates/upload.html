@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% block body %} 
+<link rel="stylesheet" href="{{url_for('static', filename='css/upload.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/multi-select.css')}}">
+
+<section class="flex row gap-10">
+  <div id="upload_options" class=" flex column gap-15">
+    <div class="container">
+        <div class="card">
+          <h3>Upload Files</h3>
+          <div class="drop_box flex column align-center">
+            <h4>Select Files here</h4>
+            <p>File Size Supported: 200MB</p>
+            <input type="file" name="files[]" id="file_input" style="display:none;"  multiple="multiple">
+            <button>Choose Files</button>
+          </div>
+        </div>
+    </div>
+    <div id="sub_folder" class="flex column gap-10 hide">
+      <div class="flex align-center gap-10 row">
+        <input type="checkbox">
+        <label for="">Add Sub Folder :</label>
+      </div>
+      <input type="text" placeholder="Enter sub-folder name">
+      <label for="">Select the folder to be created in :</label>
+      <select name="" id=""></select>
+    </div>
+  </div>
+
+  <div class="flex column gap-10" id="display" style="width: 65%; ">
+    <div id="flash_messages" class="flex row gap-5 align-center"></div>
+
+    <div id="files_uploading" class="hide flex column gap-15">
+      <div class="flex column gap-5">
+        <h3>Uploading Files : </h3>
+      </div>
+      <div id="uploading_data" >
+        
+      </div>
+    </div>
+
+    <div id="upload_files" class="flex column gap-10">
+      <div class="flex column gap-5">
+        <h3>File to be Uploaded : </h3>
+        <span>
+          <em>Please enter category for each file and update the file name. For more options click more options</em>
+        </span>
+        <button onclick="upload_files()" style="align-self: baseline;
+        ">Upload Files</button>
+      </div>
+
+      <div id="upload_file_data" class="flex column">
+       
+      </div>
+
+    </div>
+    
+    <div id="upload_activity">
+      <div id="activity_display_button" onclick="display_activity()" class="flex row align-center">
+          <img src="/static?file_name=highlight-regular-24.png" alt="">
+          <span>Activity</span>
+      </div>
+      <div id="activity_data" class="hide">
+        <div class="flex row" style="justify-content: space-between;">
+          <div class="flex column gap-5">
+            <h3>Recent files uploaded : </h3>
+            <span>
+              <em>The Activity is only for last one week, you can delete or rename your files in case of any errors</em>
+            </span>
+            <span>
+              <em>( NOTE : Only File owners can permanently delete a file from their trash )</em>
+            </span>
+          </div>
+          <div class="flex row gap-15">
+            <div onclick="load_activity()" class="flex row align-center gap-5"  style="cursor:pointer; font-size: var(--side-heading);">
+                <img src="/static?file_name=refresh-regular-24.png" alt="">
+                <em>
+                    Refresh
+                </em>
+            </div>
+            <div onclick="reset_activity()" class="flex align-center">
+                <img src="/static?file_name=exit-regular-24.png" alt="">
+            </div>
+          </div>
+        </div>
+        <div id="activity_details" style="padding-bottom: 120px;">
+          
+        </div>
+      </div>
+    </div>
+
+    <div id="display_options_response" class="hide">
+    </div>
+
+  </div>
+</section>
+<div id="overlay">
+</div>
+<!--Load using  lazy loading all the upload activities 5 days...-->
+<!--give an option to delete-->
+<!--User uploaded can view only his file....-->
+<!--Admin can view all the files-->
+
+{% endblock %}
+{% block scripts %}
+<script>
+    const mimeTypes = {{mimeType|tojson}};
+    const category = {{categories|tojson}};
+    const available_folders = {{folders|tojson}}
+    const flash_msg = document.getElementById('flash_messages');
+</script>
+<script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+<script src="{{url_for('static', filename='scripts/upload/main.js')}}" type="text/javascript"></script>
+<script src="{{url_for('static', filename='scripts/upload/upload_file.js')}}" type="text/javascript"></script>
+{% endblock %}
+

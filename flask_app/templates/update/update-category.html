@@ -1,0 +1,115 @@
+
+<style>
+#category_{
+    width: 250px !important;
+    padding: 8px 15px !important;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    gap: 10px;
+    font-size: 16px !important;
+    background-color: rgb(125, 125, 125);
+    border-radius: 4.5px;
+    color: white;
+    align-items: center;
+}
+.parts{
+    border: 1px solid darkgrey;
+    border-radius: 7px;
+    width: 50%;
+    padding-bottom: 0px !important;
+    padding: 15px 25px;
+}
+</style>
+<div class="flex column" style="width: 50%; justify-content: space-between;">
+
+    <div class='flex column gap-15'>
+        <div class="flex row" style="gap:20px">
+            <div onclick="add_category_options()" class="operation_options" id="add_category_button">
+                <img src="/static?file_name=plus-circle-regular-24.png" alt="">
+                <span><em>Add Category</em></span>
+            </div>
+            <div onclick="create_category_options()" class="operation_options" id="add_category_button">
+                <img src="/static?file_name=plus-circle-regular-24.png" alt="">
+                <span><em>Create New Category</em></span>
+            </div>
+            <div onclick="refresh_category()" class="operation_options">
+                <img src="/static?file_name=refresh-regular-24.png" alt="">
+                <em>
+                    Refresh
+                </em>
+            </div>
+        </div>
+
+        <div id="category_options" class="flex row gap-10">
+            
+        </div>
+    </div>
+    
+    <div class="flex column gap-10" style="justify-content: space-between;" id="buffer_display-container">
+        <div class="flex row gap-10" style="justify-content: space-between;">
+            <div class="flex row gap-15" style="font-size: 18px; font-weight: 600; font-style: italic;">
+                <div>
+                    <span>Categories to be : </span>
+                </div>
+                <div class="flex row gap-10">
+                    <span id="display_buffer_d" class="display_buffer_" onclick="display_buffer_changes('delete')">Deleted</span>
+                    <span id="display_buffer_a"  class="display_buffer_" onclick="display_buffer_changes('add')">Added</span>
+                </div>
+            </div>
+            <div id="update-category-submit" clas="flex row gap-15">
+                <button onclick="submit_category_list()" style="padding: 6px 12px;">Update List</button>
+            </div>
+        </div>
+        <div id="changed_category" class="flex column gap-15">
+            <div class="flex column gap-5 hide" style="flex-wrap: wrap;" id="delete_cat_">
+                <div class="flex row gap-5" id="delete_cat" style="flex-wrap: wrap;">
+                    <em id="nothing">No Categories to be Deleted</em>
+                </div>
+            </div>
+            <div class="flex column gap-5 hide" style="flex-wrap: wrap;" id="add_cat_">
+                <div class="flex row gap-5" id="add_cat" style="flex-wrap: wrap;">
+                    <em id="nothing">No Categories to be Added</em>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="flex column gap-15 parts">
+    <div class="flex row" style="justify-content: space-between; margin-bottom: 10px;">
+        <div style="font-size: 20px; font-weight: 600;">
+            <em>Category List for the Folder </em>
+        </div>
+        <div class="download_excel flex row gap-5 align-center" onclick="download_category_data(true)">
+            <div class="flex" style="position: relative; top: 1.5px;">
+                <img src="/static?file_name=download-24.png" alt="" style="height: 20px;">
+            </div>
+            <div >Download Excel</div>
+        </div>
+    </div>
+    {% if category_list %}
+        <div id="category_list">
+            <div id="category_container">
+            {% for category in category_list %}
+                <div id="category_" class="flex row gap-10 align-center">
+                    <div class="flex row gap-10">
+                        <span class="category_name">{{category['category']}}</span>
+                        <span>|</span>
+                        <span class="category_definition cut-text">{{category['definition']}}</span>
+                    </div>
+                    <div onclick="remove_category(this.parentNode)" class="flex align-center" style="cursor: pointer;">
+                        <img src="/static?file_name=x-circle-regular-white-24.png">
+                    </div>
+                </div>
+            {% endfor %}
+            </div>
+        </div>
+    {% else %}
+    <div style="font-size: 18px; height: 58vh">
+        <em>No Categories Added to the Folder</em>
+    </div>
+    {% endif %}
+</div>
+
+

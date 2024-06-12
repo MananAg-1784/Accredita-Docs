@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accredita Docs</title>
+    <link rel="stylesheet" href="{{url_for('static', filename = 'css/main.css')}}">
+    <link rel="icon" type="image/x-icon" href="{{url_for('static', filename='assets/logo.png')}}">
+</head>
+<style>
+    nav img{
+        height: 48px;
+        width: auto;
+    }
+    #main-logo{
+        height: 43px !important;
+        width: 50px !important;
+    }
+    nav > div{
+        font-size: 18px;
+    }
+    nav, nav a {
+        color: rgb(255 255 255) !important;
+    }
+    #nav_list{
+        background-color: #7b7b7b !important;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 12px 20px;
+    }
+    #navigation_bar{
+        position: sticky;
+        top: 0px;
+        z-index: 50;
+    }
+</style>
+<body>
+    <div id="navigation_bar">
+        <nav id="nav_list">
+            <div class="flex row gap-25 align-center">
+                <div class="flex row align-center" style="gap: 7px;">
+                    <div class="flex">
+                        <img id="main-logo" src="/static?file_name=logo.png" alt="">
+                    </div>
+                    <div class="flex column">
+                        <div style="font-size: 20px;">Accredita Docs</div>
+                        <div style="font-size: 11.5px;">Version : 1.2</div>
+                    </div>
+                </div>
+                <div class="flex row gap-25">
+                {% if user.dept and user.privilage != 'denied' %}
+                        {% for route in routes %}
+                            {% if route == 'Search' %}
+                                <li>
+                                    <a href="/search">{{route}}</a>
+                                </li>
+                            {% elif route == 'Upload' %}
+                                <li>
+                                    <a href="/upload">{{route}}</a>
+                                </li>
+                            {% elif route == 'Update' %}
+                                <li>
+                                    <a href="/update">{{route}}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                {% endif %}
+                    <li>
+                        <a href="/profile">Profile</a>
+                    </li>
+                {% if user.id == "57025f9d-8742-41ac-8fb6-ed734906db71" %}
+                    <li>
+                        <a href="/admin">Admin</a>
+                    </li>
+                {% endif %}
+                    <li>
+                        <a href="/logout">Log Out</a>
+                    </li>
+                </div>  
+            </div>
+            <div style="padding: 10px 0px;">
+                <div class="flex align-center">
+                    <!-- Add the required logo
+                    <img src="/static?file_name=**filename.jpg" alt="">
+                    -->
+                </div>
+            </div>
+        </nav>
+    </div>
+    {% block body %} {% endblock %}
+</body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+{% block scripts %} {% endblock %}
+</html>

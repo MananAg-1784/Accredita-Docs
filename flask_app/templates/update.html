@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+{% block body %} 
+<script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
+
+<link rel="stylesheet" href="{{url_for('static',filename = 'css/multi-select.css')}}">
+<link rel="stylesheet" href="{{url_for('static',filename = 'css/update.css')}}">
+
+<div style="overflow: auto; flex:1;">
+<section id="update-nav" class="flex row gap-15 align-center">
+    <div class="selected" id="folder" onclick="update_nav(this.innerHTML)">Folder</div>
+    <div id="category" onclick="update_nav(this.innerHTML)">Category</div>
+    <div id="criteria" onclick="update_nav(this.innerHTML)">Criteria</div>
+    <div id="refresh_nav_" onclick="refresh_nav_data()" class="flex row align-center gap-5">
+        <div class="flex">
+            <img src="/static?file_name=refresh-regular-24.png" alt="">
+        </div>
+        <div>
+            <em>
+                Refresh
+            </em>
+        </div>
+    </div>
+</section>
+
+<div id="flash_messages" class="flex row gap-10 align-center"></div>
+<section id="body" style="margin-bottom:60px;">
+    <div id="folders" class="hide flex column gap-25">
+        <div class="flex column gap-10">
+            <div style="font-size: var(--side-heading); font-weight: 600;">
+                {% if not data_dict.folders %}
+                <em>
+                    No folders in the database!! 
+                </em>
+                {% else %}
+                <em>
+                    Saved Folders        
+                </em>
+                {% endif %}
+            </div>
+            <div style="font-size: var(--paragraph);" class="flex column gap-15">
+                <div id="selected-folder-list" class="flex row gap-10" style="flex-wrap: wrap;
+                ">
+                    {% for folder in data_dict.folders %}
+                    <div class="flex row gap-10 align-center" style="justify-content: space-between;">
+                        <span class="folder-name  cut-text">{{folder['folder_name']}}</span>
+                        <div style="height: 100%; overflow: hidden; display:flex; align-items:stretch;">
+                            <span style="border:1px solid white;"></span>
+                        </div>
+                        <span class="folder-accredition">{{folder['accredition']}}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="flex column gap-15" id="folders_data_">
+
+        </div>
+    </div>   
+    <div id="categories" class="hide flex column gap-25">
+        <div class="flex row gap-10 align-center" style="font-size: 18px !important;">
+            {% if not data_dict.folders %}
+                <div style="font-size: 18px; font-weight: 600;">
+                    <em>No Folders!! Please Add folders from the folders tab..</em>
+                </div>
+            {% else %}
+                <div style="font-size: 18px; font-weight: 600;">
+                    <em>Select Folder : </em>
+                </div>
+                <select name="select_folder" class="select_folder" onchange="load_folder_category_details(this.value)" style="    padding: 5px 8px !important; ">
+                    <option value="1" selected disabled>Choose Folder</option>
+                    {% for folder in data_dict.folders %}
+                        <option value="{{folder['folder_name']}}">{{folder['folder_name']}}</option>
+                    {% endfor %}
+                </select>
+                <button id="go_back" onclick="load_category_data()" style="background-color: rgb(114 114 114) !important; display: none; border: none !important; gap:5px; color: white; padding: 5px 12px !important;" class="flex row align-center"> 
+                    <span style=" font-weight:600;">Go Back</span>
+                    <img src="/static?file_name=arrow_head-white.png" style=" height:12px; position: relative; top: 2px;" >
+                </button>
+            {% endif %}
+        </div>
+        
+        <div id='folder_category_details' class='flex column gap-15' >
+            <div class="flex row" style="gap:20px">
+                
+                <div onclick="create_category_options()" class="operation_options" id="add_category_button">
+                    <img src="/static?file_name=plus-circle-regular-24.png" alt="">
+                    <span><em>Create New Category</em></span>
+                </div>
+                <div onclick="modify_category_options()" class="operation_options"  id="add_category_button">
+                    <img src="/static?file_name=plus-circle-regular-24.png" alt="">
+                    <span><em>Modify Category</em></span>
+                </div>
+                <div onclick="delete_category_options()" class="operation_options"  id="add_category_button">
+                    <img src="/static?file_name=trash-regular-24.png" alt="">
+                    <span><em>Delete Category</em></span>
+                </div>
+                <div onclick="add_excel()" class="operation_options" id="add_category_button">
+                    <img src="/static?file_name=plus-circle-regular-24.png" alt="">
+                    <span><em>Add Excel File</em></span>
+                </div>
+        
+                <div class="download_excel flex row gap-5 align-center" onclick="download_category_data()">
+                    <div class="flex" style="position: relative; top: 1.5px;">
+                        <img src="/static?file_name=download-24.png" alt="" style="height: 20px;">
+                    </div>
+                    <div>Download Category Data </div>
+                </div>
+        
+            </div>
+            <div id="category_options" class="flex row">
+            </div>
+        </div>
+    </div>   
+    <div id="criteria" class="hide flex column gap-25">
+        <div id="change_accredition" class="flex row gap-10 align-center">
+            <div style="font-size: 18px; font-weight: 600;">
+                <em>Select Accredition : </em>
+            </div>
+             <select name="select_accredition" id="select_accredition" onchange="load_acc_criteria(this.value)" style="padding : 5px 8px !important">
+                <option value="1" selected disabled>Select Accredition</option>
+                {% for x in data_dict.accredition %}
+                    <option value="{{x}}">{{x}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div id="acc_data"class="flex column gap-15">
+        
+        </div>
+    </div>   
+</section>
+
+<div id="display_options_response" class="hide">
+</div>
+<div>
+{% endblock %}
+{% block scripts %} 
+<script>
+    var folders = {{data_dict.folders| tojson}};
+    var available_cat= {{data_dict.categories| tojson}};
+    var accredition = {{data_dict.accredition| tojson}};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+<script src="{{url_for('static', filename='scripts/update/main.js')}}"></script>
+<script src="{{url_for('static', filename='scripts/update/folder.js')}}"></script>
+<script src="{{url_for('static', filename='scripts/update/category.js')}}"></script>
+<script src="{{url_for('static', filename='scripts/update/criteria.js')}}"></script>
+<script src="{{url_for('static', filename='scripts/update/excel.js')}}"></script>
+
+{% endblock %}

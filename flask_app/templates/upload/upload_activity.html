@@ -1,0 +1,234 @@
+<div class="flex" style="justify-content:flex-end;">
+    <select onchange="display_activity_files(this.value)">
+        <option value="trashed">Trashed Files</option>
+        <option value="uploaded">Uploaded Files</option>
+        <option value="restored">Restored Files</option>
+        <option value="all" selected>All Activity</option>
+    </select>
+</div>
+<div class="flex column" style="gap: 30px;margin-top:30px;">
+
+    <div class="flex column folder_data">
+        <div style="font-size: 18.5px;">
+            <span style="font-weight:600;">Recent Activities </span>
+            <span>
+                <em>(Today : {{date}})</em>
+            </span>
+        </div>
+        {% if recent_activity|length == 0 %}
+        <div style="margin-top: 9px;font-style: italic;" class="no_data">
+            <em>
+                No Recent activity for the day...
+            </em>
+        </div>
+        {% else %}
+        <table class="files_table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    {% if priv == 'admin' %}
+                        <th>Owner</th>
+                    {% endif %}
+                    <th>Folder</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for _ in recent_activity %}
+                <tr class="files_data file_activity_data {{_.action}}" id="data_item_{{_.id}}">
+                    <td class="file_name_col">
+                        <div class="flex row gap-10 align-center">
+                            <img src="{{_.icon}}" alt="">
+                            <span class="file_name cut-text">
+                                <abbr title="{{_.name}}">{{_.name}}</abbr>
+                            </span>
+                        </div>
+                    </td>
+                    
+                    {% if priv == 'admin' %}
+                        {% if _.owner %}
+                        <td class="file_owner cut-text">
+                            <abbr title="{{_.owner}}">{{_.owner}}</abbr>
+                        </td>
+                        {% else %}
+                        <td class="file_owner"> - </td>
+                        {% endif %}
+                    {% endif %}
+
+                    <td class="file_folder">{{_.folder}}</td>
+                    <td class="file_action">
+                        <em>
+                            {{_.action}}
+                        </em>
+                    </td>
+
+                    <td class="file_more_options_">
+                        <div class="flex align-center"><img src="/static?file_name=dots-regular-24.png" alt=""></div>
+                        <div id="options_list" class="column">
+                            <a href="{{_.link}}" target="_blank" id="view">
+                                <div class="flex row gap-5">
+                                    <div class="flex align-center">
+                                        <img src="/static?file_name=view-regular-24.png" alt="">
+                                    </div>
+                                    <div>
+                                        View
+                                    </div>
+                                </div>
+                            </a>
+                            <div class="flex row gap-5" onclick="rename_file({{_.data_item}},'{{_.name}}')">
+                                <div class="flex align-center">
+                                    <img src="/static?file_name=rename-regular-24.png" alt="">
+                                </div>
+                                <div>
+                                    Rename
+                                </div>
+                            </div>
+                            {% if _.action == 'trashed' %}
+                            <div class="flex row gap-5" onclick="restore_file({{_.data_item}},'{{_.folder}}')">
+                                <div class="flex align-center">
+                                    <img src="/static?file_name=restore-regular-24.png" alt="">
+                                </div>
+                                <div>
+                                    Restore
+                                </div>
+                            </div>
+                            <div class="flex row gap-5" onclick="delete_file({{_.data_item}}, '{{_.action}}')">
+                                <div class="flex align-center">
+                                    <img src="/static?file_name=trash-regular-24.png" alt="">
+                                </div>
+                                <div>
+                                    Delete Forever
+                                </div>
+                            </div>
+                            {% else %}
+                            <div class="flex row gap-5" onclick="delete_file({{_.data_item}}, '{{_.action}}')">
+                                <div class="flex align-center">
+                                    <img src="/static?file_name=trash-regular-24.png" alt="">
+                                </div>
+                                <div>
+                                    Delete
+                                </div>
+                            </div>
+                            {% endif %}
+
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+    </div>
+
+    {% for folder in folders %}
+    <div class="flex column folder_data">
+        <div style="font-size: 17.5px;">
+            <span style="font-weight:600;">Folder Name : </span>
+            <span style="font-style: italic;">{{folder[1]}}</span>
+        </div>
+        {% if folder[1] in no_data %}
+        <div style="margin-top: 9px;font-style: italic;" class="no_data">
+            <em>
+                No Recent activity for the the folder..
+            </em>
+        </div>
+        {% else %}
+        <table class="files_table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    {% if priv == 'admin' %}
+                        <th>Owner</th>
+                    {% endif %}
+                    <th>Time</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for _ in activity[folder[1]] %}
+                <tr class="files_data file_activity_data {{_.action}}"  id="data_item_{{_.id}}">
+                    <td class="file_name_col">
+                        <div class="flex row gap-10 align-center">
+                            <img src="{{_.icon}}" alt="">
+                            <span class="file_name cut-text">
+                                <abbr title="{{_.name}}">{{_.name}}</abbr>
+                            </span>
+                        </div>
+                    </td>
+
+                    {% if priv == 'admin' %}
+                        {% if _.owner %}
+                        <td class="file_owner cut-text">
+                            <abbr title="{{_.owner}}">{{_.owner}}</abbr>
+                        </td>
+                        {% else %}
+                        <td class="file_owner"> - </td>
+                        {% endif %}
+                    {% endif %}
+
+                    <td class="file_time">{{_.time}}</td>
+                    <td class="file_action">
+                        <em>
+                            {{_.action}}
+                        </em>
+                    </td>
+
+                    <td class="file_more_options_">
+                        <div class="flex align-center"><img src="/static?file_name=dots-regular-24.png" alt=""></div>
+                        <div id="options_list" class="column">
+                            <a href="{{_.link}}" target="_blank" id="view">
+                                <div class="flex row gap-5">
+                                    <div class="flex align-center">
+                                        <img src="/static?file_name=view-regular-24.png" alt="">
+                                    </div>
+                                    <div>
+                                        View
+                                    </div>
+                                </div>
+                            </a>
+                            <div class="flex row gap-5" onclick="rename_file({{_.data_item}},'{{_.name}}')">
+                                <div class="flex align-center">
+                                    <img src="/static?file_name=rename-regular-24.png" alt="">
+                                </div>
+                                <div>
+                                    Rename
+                                </div>
+                            </div>
+                            {% if _.action == 'trashed' %}
+                            <div class="flex row gap-5" onclick="restore_file({{_.data_item}},'{{_.folder}}')">
+                                <div class="flex align-center">
+                                    <img src="/static?file_name=restore-regular-24.png" alt="">
+                                </div>
+                                <div>
+                                    Restore
+                                </div>
+                            </div>
+                            <div class="flex row gap-5" onclick="delete_file({{_.data_item}}, '{{_.action}}')">
+                                <div class="flex align-center">
+                                    <img src="/static?file_name=trash-regular-24.png" alt="">
+                                </div>
+                                <div>
+                                    Delete Forever
+                                </div>
+                            </div>
+                            {% else %}
+                            <div class="flex row gap-5" onclick="delete_file({{_.data_item}}, '{{_.action}}')">
+                                <div class="flex align-center">
+                                    <img src="/static?file_name=trash-regular-24.png" alt="">
+                                </div>
+                                <div>
+                                    Delete
+                                </div>
+                            </div>
+                            {% endif %}
+
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>

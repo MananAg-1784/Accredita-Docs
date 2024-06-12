@@ -1,0 +1,115 @@
+
+<div class="flex column" style="gap:20px; margin-bottom: 15px;">
+    <div class="flex row " style="gap:20px;">
+
+        <div onclick="new_criteria()" class="operation_options" id="add_criteria_button">
+            <img src="/static?file_name=plus-circle-regular-24.png" alt="">
+        <span><em>Create New Criteria</em></span>
+        </div>
+        <div onclick="add_criteria_excel()" class="operation_options" id="add_criteria_excel_button">
+            <img src="/static?file_name=plus-circle-regular-24.png" alt="">
+            <span><em>Add Excel File</em></span>
+        </div>
+        <div onclick="refresh_criteria()" class="operation_options">
+            <img src="/static?file_name=refresh-regular-24.png" alt="">
+            <em>
+                Refresh
+            </em>
+        </div>
+        <div class="download_excel flex row gap-5 align-center" onclick="download_criteria_data()">
+            <div class="flex" style="position: relative; top: 1.5px;">
+                <img src="/static?file_name=download-24.png" alt="" style="height: 20px;">
+            </div>
+            <div>Download Criteria Data</div>
+        </div>
+    </div>   
+    <div id="criteria_options" class="flex row gap-10">
+
+   </div>
+</div>
+
+<div class="flex column gap-25">
+    {% if not criteria %}
+        <div style="font-size: 17.5px;">
+            <em>No Criteria Added for the Accredition</em>
+        </div>
+    {% else %}
+    <div class="flex row gap-5 align-center">
+        <div style="font-size: 18px; font-weight: 600;">
+            <em>Seach Criteria : </em>
+        </div>
+        <select name="search_criteria" id="search_criteria" onchange="search_criteria(this.value)">
+            {% for x in criteria %}
+                <option value="{{x['criteria']}}">{{x['criteria']}}</option>
+            {% endfor %}
+            <option value="99" selected>All</option>
+        </select>
+    </div>
+    <div class="flex column gap-25">
+        <div id="criteria_list">
+            {% for x in criteria %}
+                {% if not x['category'] %}
+                <div class="criteria flex column gap-10" id="{{x['criteria']}}">
+                    <div class="flex row align-center" style="justify-content: space-between;">
+                        <div class="flex row gap-5" id="criteria_head">
+                            <strong>Code : </strong>
+                            <div class="criteria_name">{{x['criteria']}}</div>
+                        </div>
+                        <div id="edit_buttons" class="flex row gap-10">
+                                <div class="flex row gap-5 align-center" id="edit_criteria_button" onclick="edit_criteria(this.parentNode)">
+                                    <div class="flex align-center">
+                                        <img src="/static?file_name=rename-regular-24.png" alt="">
+                                    </div>
+                                    <div id="edit">Edit</div>
+                                </div>
+                        </div>
+                    </div>
+                    <div class="flex column">
+                        <strong>Definition : </strong>
+                        <div class="criteria_definition" style="font-size: 15.8px;">{{x['definition']}}</div>
+                    </div>
+                    <div>
+                        <div class="criteria_category flex row gap-5">
+                           <em style="font-weight: 600;">No Categories Added</em>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        <div id="criteria_list">
+            {% for x in criteria %}
+                {% if x['category'] %}
+                    <div class="criteria flex column gap-10" id="{{x['criteria']}}">
+                        <div class="flex row align-center" style="justify-content: space-between;">
+                            <div class="flex row gap-5" id="criteria_head">
+                                <strong>Code : </strong>
+                                <div class="criteria_name">{{x['criteria']}}</div>
+                            </div>
+                            <div id="edit_buttons" class="flex row gap-10">
+                                    <div class="flex row gap-5 align-center" id="edit_criteria_button" onclick="edit_criteria(this.parentNode)">
+                                        <div class="flex align-center">
+                                            <img src="/static?file_name=rename-regular-24.png" alt="">
+                                        </div>
+                                        <div id="edit">Edit</div>
+                                    </div>
+                            </div>
+                        </div>
+                        <div class="flex column">
+                            <strong>Definition : </strong>
+                            <div class="criteria_definition" style="font-size: 15.8px;">{{x['definition']}}</div>
+                        </div>
+                        <div>
+                            <div class="criteria_category flex row gap-5">
+                                {% for c in x['category'] %}
+                                    <div class="category_name">{{c}}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>

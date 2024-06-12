@@ -1,0 +1,239 @@
+{% extends 'base.html' %}
+{% block body %}
+<style>
+    strong {
+        font-weight: 600;
+    }
+
+    section {
+        border: 1px solid darkgray;
+        border-radius: 7px;
+        padding: 20px 30px;
+    }
+
+    #flash_messages {
+        font-size: 18.5px;
+        color: red;
+        font-weight: 500;
+        padding: 10px 50px !important;
+    }
+
+    ol {
+        padding-left: 40px;
+    }
+
+    button {
+        font-size: 14px;
+        padding: 5px 11px;
+    }
+
+    select,
+    input {
+        border: 1px solid black;
+    }
+
+    .enable {
+        background-color: #0d6efd !important;
+        border-color: #0d6efd !important;
+    }
+
+    em {
+        font-weight: 400;
+    }
+
+    .cut-text {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        max-width: 350px;
+    }
+
+    .cut-text2 {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        max-width: 220px;
+        display: inline-block;
+    }
+
+    .gap-5 {
+        gap: 5px;
+    }
+
+    h3 {
+        font-weight: 600;
+        font-size: 18px;
+    }
+
+    ol li {
+        padding-right: 10px;
+        list-style: decimal !important;
+    }
+
+    #container {
+        margin: 50px;
+        column-gap: 20px;
+        display: grid;
+        grid-template-columns: 500px 1fr;
+    }
+
+    table {
+        width: 100%;
+        text-align: left;
+    }
+
+    th {
+        font-weight: 600;
+        padding: 8px 0px;
+    }
+    td{
+        padding: 8px 0px;
+        padding-right: 20px;
+    }
+    td, th{
+        border-bottom:  1px solid grey !important;
+    }
+
+    thead {
+        border-bottom: 1px solid black;
+
+    }
+</style>
+
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<div id="flash_messages" class="flex column gap-5">
+    {% for message in messages %}
+    <div>{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+<div id="flash_messages" class="flex column gap-5"></div>
+<div id="container">
+    <div class="flex column gap-25" style="max-width: 500px;">
+        <section class="flex column gap-15" style="font-size: 17px;">
+            <div class="flex column gap-5">
+                <h3>Add new Accredition</h3>
+                <div>
+                    <form action="/add_acc" method="post">
+                        <input type="text" placeholder="New Accredition" name="acc" id="acc">
+                        <button type="submit">Add Acc</button>
+                    </form>
+                </div>
+            </div>
+            <div class="flex column gap-5">
+                <h3>Accreditions</h3>
+                <ol>
+                    {% for i in acc %}
+                    <li>{{i}}</li>
+                    {% endfor %}
+                </ol>
+            </div>
+        </section>
+
+        <section class="flex column gap-15" style="font-size: 17px;">
+            <div class="flex column gap-5">
+                <h3>Add new Department</h3>
+                <div>
+                    <form action="/add_dept" method="post">
+                        <input type="text" placeholder="Department Name" name="dept" id="dept">
+                        <button type="submit">Add Dept</button>
+                    </form>
+                </div>
+            </div>
+            <div class="flex column gap-5">
+                <h3>Departments</h3>
+                <ol>
+                    {% for i in dept %}
+                    <li>{{i.name}}</li>
+                    {% endfor %}
+                </ol>
+            </div>
+
+        </section>
+
+      
+    </div>
+
+    <section>
+        <h3 style="padding-bottom: 10px;">Department Owners</h3>
+        <div>
+            <table>
+                <thead>
+                    <tr>
+
+                        <th>Department</th>
+                        <th>Current Owner</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in dept %}
+                    <tr>
+                        <td>{{i.name}}</td>
+                        <td>
+                            {% if i.owner %}
+                            <em>
+                                {{i.owner}}
+                            </em>
+                            {% else %}
+                            <em>No Assigned Owner</em>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if i.users|length > 0 %}
+                            <select name="{{i.name}}" id="{{i.id}}_owner" onchange="change_owner(this,'{{i.name}}')">
+                                <option value="99" selected disabled>Change dept owner</option>
+                                {% for _ in i.users %}
+                                <option value="{{_}}">{{_}}</option>
+                                {% endfor %}
+                            </select>
+                            {% else %}
+                            <em>No Users Registered yet</em>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+</div>
+<script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script>
+<script>
+    const socket = io("/admin");
+    var flash_msg = document.getElementById('flash_messages');
+    function check_status_code(code_data){
+        var status = 'status' in code_data ? code_data['status'] : null;
+        if(status == 400){
+            console.log(code_data['error']);
+            flash_msg.innerHTML = '';
+            alert(code_data['error']);
+            socket.disconnect();
+            return 0
+        } else {
+            return 1
+        }
+    }
+
+    function change_owner(select_, dept){
+        email = select_.value;
+        console.log("values", email, dept);
+        json = {email:email, dept:dept};
+
+        socket.connect();
+        socket.emit("change_dept_owner", json, (response) =>{
+            response = JSON.parse(response);
+            if(check_status_code(response)){
+                if(response.error){
+                    flash_msg.innerHTML = response.error;
+                } else {
+                    flash_msg.innerHTML = "Department owner updated";
+                }
+            }
+        });
+    }
+</script>
+{% endblock %}

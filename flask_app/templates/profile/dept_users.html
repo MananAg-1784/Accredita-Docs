@@ -1,0 +1,91 @@
+<style>
+    table{
+    width: 100%;
+    border-collapse: collapse;
+    }
+    th{
+        font-weight: 600;
+    }
+    td, th{
+        text-align: left;
+        padding:9px 6px !important;
+        width: max-content;
+    }
+    tr{
+        border-bottom: 1px solid grey;
+    }
+</style>
+
+<div class="flex column gap-15">
+    <div class="flex column gap-5">
+        <div style="font-size: 25px; font-weight: 500;">Department Teachers</div>
+        <span>
+            <em style="width: max-content">List of all the teachers in the department.</em>
+        </span>
+    </div>
+    {% if dept_users|length == 0 %}
+    <div>
+        <span> <em>No Teachers have Registered Yet</em></span>
+    </div>
+    {% else %}
+    <div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Access</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for dept_user in dept_users %}
+                <tr>
+                    <td>
+                        <span class="name cut-text2">{{dept_user.name}}</span>
+                    </td>
+                    <td>
+                        <span class="email cut-text2">{{dept_user.email}}</span>
+                    </td>
+                    <td>
+                        <div class="flex row gap-10">
+                        <select name="privilage" style="width: 100px; padding: 4px !important;" id="privilage_{{loop.index}}" onchange="priv_button_enable('change_priv_{{dept_user.email}}', this.value, '{{dept_user.privilage}}')">
+                            <option value="-1" selected disabled>Select Access</option>
+                            {% for x in available_privs %} 
+                                {% if x == dept_user.privilage %}   
+                                    <option value="{{x}}" selected>{{x}}</option>
+                                {% else %}
+                                    <option value="{{x}}">{{x}}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                        <div class="flex row gap-5 align-center" >
+                            <button id="change_priv_{{dept_user.email}}" class="change_priv" onclick="change_priv('{{dept_user.email}}',1,{{loop.index}})">
+                            {% if dept_user.privilage and dept_user.privilage != 'denied'  %}
+                                <span>Change</span>
+                            {% else %}
+                                <span>Grant</span>
+                            {% endif %}
+                            </button>
+                            {% if dept_user.privilage == 'denied' %}
+                                <span style="padding-left: 10px;">
+                                    <em>Access is Denied</em>
+                                </span>
+                                <span class="flex" onclick="remove_user('{{dept_user.email}}')" style="cursor: pointer;">
+                                    <img src="/static?file_name=x-regular-24.png" alt="">
+                                </span>
+                            {% else %}
+                                <button id="deny_access" onclick="change_priv('{{dept_user.email}}','denied',{{loop.index}})" style="background-color: #0d6efd;">
+                                    Deny
+                                </button>
+                            {% endif %}
+                        </div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>

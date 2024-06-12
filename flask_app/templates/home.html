@@ -1,0 +1,168 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accredita Docs</title>
+    <link rel="icon" type="image/x-icon" href="{{url_for('static', filename='assets/logo.png')}}">
+</head>
+<link rel="stylesheet" href="{{url_for('static', filename = 'css/main.css')}}">
+<style>
+    body{
+        height: 100vh !important;
+        overflow: hidden;
+    }
+
+    #about-us{
+        margin: auto 110px;
+        gap: 50px;
+    }
+    #about-us > div{
+        width: 50%;
+    }
+    #moto{
+        color: #5a5a5a;
+    text-transform: uppercase;
+    font-size: 18px;
+    font-weight: 600;
+    }
+    #heading{
+        font-size: 60px;
+    line-height: 53px;
+    font-weight: 600;
+    font-family: monospace;
+    }
+    #definition{
+        font-style: normal;
+    font-size: 17px;
+    text-align: justify;
+    }
+    #logins{
+        display: flex;
+        flex-direction: row;
+        gap:13px
+    }
+    #version{
+        font-family: monospace;
+        font-size: 20px;
+    }
+    button{
+        border: none !important;
+        padding: 9px 20px !important;
+        font-size: 17.5px;
+        box-shadow: 0px 0px 2px 0px #2e82ff8a;
+        transition: all 0.2s linear;
+    }
+    #login{
+        font-size: 17.5px;
+        background-color: gainsboro !important;
+        color: black;
+        padding: 9px 35px !important;
+        box-shadow: 0px 0px 2px 0px #c8c8c8 !important;
+    }
+    #register img{
+        position: relative;
+        top: 1.5px;
+        height: 14.5px;
+    }
+    .gap-5{
+        gap: 5px;
+    }
+    #login img{
+        height: 12px !important;
+    top: 1.8px;
+    position: relative;
+    }
+    #login_button:hover #login{
+        background-color: #e9e9e9 !important;
+    }
+    #register button{
+        background-color: #2e82ff !important;
+    }
+    #register:hover button{
+        background-color: #0064fb !important;
+    }
+    #background-img{
+        height: 100vh;
+        position: relative;
+        width: 1000px;
+        right: -30px;
+        top: 0px;
+    }
+    footer{
+        position: fixed;
+        bottom: 0px;
+        padding: 10px 10px;
+    }
+</style>
+<body class="flex align-center">
+    <div class="flex row" id="about-us">
+        <div class="flex column gap-25" style="justify-content: center;">
+            <div id="moto">Efficient Document Manager</div>
+            <div class="flex row gap-5 align-center">
+                <div class="flex align-center">
+                    <img src="/static?file_name=logo-black.png" alt="">
+                </div>
+                <div class="flex column gap-5">
+                    <div id="heading">Accredita Docs</div>
+                    <div id="version">Version: 1.2</div>
+                </div>
+            </div>
+            <div id="definition">
+                Accredita Docs is your comprehensive document management solution tailored for college departments. Seamlessly integrated with Google Drive, Accredita Docs simplifies the organization and retrieval of essential documents, ensuring efficiency and compliance with departmental standards.
+            </div>
+            <div id="logins">
+                <a href="/login" id="login_button">
+                    <button id="login">
+                        <div class="flex row align-center" style="gap: 8px;">
+                            <div>Login</div>
+                            <div class="flex">
+                                <img src="/static?file_name=arrow_head-black.png" alt="">
+                            </div>
+                        </div>
+                        
+                    </button>
+                </a>
+                <a href="/register" id="register">
+                    <button >
+                        <div class="flex row gap-5 align-center" >
+                            <div>Register</div>
+                            <div class="flex">
+                                <img src="/static?file_name=arrow_head-white.png" alt="">
+                            </div>
+                        </div>
+                    </button>
+                </a>
+              
+            </div>
+        </div>
+        <div class="flex">
+            <img src="/static?file_name=jut9.jpg" alt="" id="background-img">
+        </div>
+    </div>
+    <footer>
+        <div class="flex row gap-15">
+            <div class="flex row gap-5"  id="definition">
+                <span>Developed by : </span>
+                <em>
+                    <span>Manan Agarwal</span>
+                </em>
+            </div>
+            <div style="border-right: 2px solid grey;"></div>
+            <div class="flex row gap-5">
+                <span>Special Thanks to : </span>
+                <em>
+                    <span>Dr. Ashok Immanuel</span>
+                </em>
+                and
+                <em>
+                    <span>Dr. Rohini V.</span>
+                </em>
+
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
+

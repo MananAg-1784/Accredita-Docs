@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+{% block body %} 
+<style>
+    section{
+        margin: 20px var(--side-margin);
+        margin-left: 0px;
+        border-radius: 5px;
+        border: 1px solid #c6c6c6;
+        padding: 20px 30px;
+    }
+    button{
+        background-color: grey;
+        border-color: grey;
+    }
+    #flash_messages{
+        font-size:18.5px;
+        color: red;
+        font-weight: 500;
+        padding: 10px 50px !important;
+    }
+    .enable{
+        background-color : #0d6efd !important;
+        border-color : #0d6efd !important;
+    }
+    #profile_details{
+        margin-left: 40px;
+    }
+    #dept_user{
+        width: 65%;
+    }
+    strong{
+        font-weight: 500;
+    }
+    em{
+        font-weight: 400;
+    }
+    .cut-text{
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    max-width: 350px;
+    }
+    .cut-text2{
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    max-width: 220px;
+    display: inline-block;
+    }
+    .gap-5{
+        gap: 5px;
+    }
+</style>
+<div id="flash_messages" class="flex row gap-10"></div>
+<div style="font-size: 30px; font-weight: 400; padding-left: 50px;">Welcome !</div>
+<div class="flex row gap-5">
+
+    <section id="profile_details" class="flex column gap-15" style="width: 30%;font-size: 17px;">
+        <div class="flex column gap-5">
+            <div class="cut-text"><strong>Name : </strong>
+                <em>
+                    <abbr title="{{name}}">
+                        {{name}}
+                    </abbr>
+                </em>
+            </div>
+            <div class="cut-text"><strong>Email : </strong> 
+                <em  >
+                    <abbr title="{{email}}">
+                        {{email}}
+                    </abbr>
+                </em>
+            </div>
+        </div>
+        
+        <div class="flex column gap-10" id="department">
+            {% if user.dept %}
+            <div class="flex column gap-5">
+                <div class="flex row gap-5" class="cut-text">
+                    <strong>
+                        Department : 
+                    </strong>
+                    <div>
+                        <em >{{user.dept}}</em>
+                    </div>
+                </div>
+                {% if not user.privilage  %}
+                    <strong>Access Requested</strong>
+                {% elif user.privilage == 'denied' %}
+                    <strong>Access is Denied Contact Admin</strong>
+                {% else %}
+                    <div>
+                        <strong>Access : </strong> 
+                        <em>
+                            {{user.privilage}}
+                        </em>
+                    </div>
+                {% endif %}
+            </div>
+            {% endif %}
+            {% if not user.dept or user.privilage == 'denied' %}
+                <div class="flex column gap-5">
+                    <div>
+                        <strong>
+                            Request Department Access : 
+                        </strong>
+                    </div>
+                    <div class="flex row gap-5">
+                        <select name="select-dept" id="select-dept" onchange="priv_button_enable('dept_access', 1, 0)">
+                            <option value="" disabled selected>Select Department</option>
+                            <!--Add departments available-->
+                            {% for dept in depts %}
+                                <option value="{{dept}}">{{dept}}</option>
+                            {% endfor %}
+                        </select>
+                        <button id="dept_access" onclick="request_department()" disabled>Get Access</button>        
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    {% if user.privilage == 'admin' %}
+    <section id="dept_user" style="height: 60vh; overflow: auto;">
+        <div></div>
+        <div id="other-admin-data">
+        </div >
+    </section>
+    {% endif %}
+</div>
+
+    
+
+{% endblock %}
+{% block scripts %}
+<script>
+    const user = {privilage:"{{user.privilage}}",email:"{{email}}", dept:"{{user.dept}}"};
+</script>
+<script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script>
+<script src="{{url_for('static', filename='scripts/profile/main.js')}}" type="text/javascript"></script>
+{% if user.privilage == 'admin' %}
+<script src="{{url_for('static', filename='scripts/profile/admin.js')}}" type="text/javascript"></script>
+{% endif %}
+
+{% endblock %}
+

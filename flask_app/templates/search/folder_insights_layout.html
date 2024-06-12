@@ -1,0 +1,255 @@
+
+
+{% for folder in folders %}
+    <div id="{{folder|replace(' ', '')}}_insight" class="insight_folder flex column gap-5 hide" style="padding-bottom: 80px !important;">
+    {% if not data[folder] %}
+        <div class="display_error">
+            <span>Error, Try Again</span>
+        </div>
+    {% elif data[folder] == 1%}
+        <div style="font-size: 17px;">
+            <em>No Insights found for the folder.</em>
+        </div>
+    {% else %}
+        {% set temp_data = data[folder].error %}
+        {% if temp_data %}
+        <div class="display_error flex column gap-5">
+            {% for x in temp_data %}
+                <span>{{x}}</span>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% set temp_data = data[folder].new_category %}
+        {% if temp_data %}
+        <div class="flex column gap-5">
+            <div class="flex column gap-5">
+                <strong id="insight_heading">Missing information about Category </strong>
+                <div class="flex row gap-5 align-center">
+                    <span>Unknown Categories : </span>
+                    <div class="flex row gap-5" style="flex-wrap: wrap;">
+                        {% for x in range(0,temp_data|length) %}
+                            {% set count = namespace(value=0) %}
+                            {% for j in range(x+1,temp_data|length) %}
+                                {% if temp_data[j].category == temp_data[x].category %}
+                                    {% set count.value = count.value + 1 %}
+                                {% endif %}
+                            {% endfor %}
+                            {% if count.value==0 %}
+                                <span class="category_box category_box2">
+                                    {{temp_data[x].category}}
+                                </span>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="flex row gap-5">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Time</th>
+                            <th>Owner</th>
+                            <th>Category-Code</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for x in temp_data %}
+                    {% set _ = data[folder].file_data[x.id] %}
+                        <tr class="files_data">
+                            <td class="file_name_col">
+                                <div class="flex row align-center">
+                                    <img src="{{_.icon}}" alt="">
+                                    <span class="file_name">
+                                        {{_.name}}
+                                    </span>
+                                </div>
+                            </td>
+                            <td>{{_.time}}</td>
+                            <td class="file_owner">{{_.email}}</td>
+                            <td><em>{{x['category']}}</em></td>
+                            <td class="file_more_options_">
+                                <div class="flex align-center"><img src="/static?file_name=dots-regular-24.png" alt=""></div>
+                                <div id="options_list" class="column">
+                                    <a href="{{_.link}}" target="_blank" id="view">
+                                        <div class="flex row gap-5">
+                                            <div class="flex align-center">
+                                                <img src="/static?file_name=view-regular-24.png" alt="">
+                                            </div>
+                                            <div>
+                                                View
+                                            </div>
+                                        </div>
+                                    </a>
+                                    <div class="flex row gap-5" onclick="insights_overlay_option('{{_.drive_id}}','{{_.name}}')">
+                                        <div class="flex align-center">
+                                            <img src="/static?file_name=rename-regular-24.png" alt="">
+                                        </div>
+                                        <div>
+                                            Rename
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+
+        {% set temp_data = data[folder].wrong_file_format %}
+        <div class="flex column gap-5">
+            <strong id="insight_heading">Incorrect naming format </strong>
+            {% if temp_data %}
+            <div class="flex row gap-5">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Owner</th>
+                            <th>Size</th>
+                            <th>Reason</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for x in temp_data %}
+                    {% set _ = data[folder].file_data[x.id] %}
+                        <tr class="files_data">
+                            <td class="file_name_col">
+                                <div class="flex row align-center">
+                                    <img src="{{_.icon}}" alt="">
+                                    <span class="file_name">
+                                        {{_.name}}
+                                    </span>
+                                </div>
+                            </td>
+                            <td class="file_owner">{{_.email}}</td>
+                            <td class="file_owner">{{_.size}}</td>
+                            <td class="file_owner"><em>{{x.reason}}</em></td>
+                            <td class="file_more_options_">
+                                <div class="flex align-center"><img src="/static?file_name=dots-regular-24.png" alt=""></div>
+                                <div id="options_list" class="column">
+                                    <a href="{{_.link}}" target="_blank" id="view">
+                                        <div class="flex row gap-5">
+                                            <div class="flex align-center">
+                                                <img src="/static?file_name=view-regular-24.png" alt="">
+                                            </div>
+                                            <div>
+                                                View
+                                            </div>
+                                        </div>
+                                    </a>
+                                    <div class="flex row gap-5" onclick="insights_overlay_option('{{_.drive_id}}','{{_.name}}')">
+                                        <div class="flex align-center">
+                                            <img src="/static?file_name=rename-regular-24.png" alt="">
+                                        </div>
+                                        <div>
+                                            Rename
+                                        </div>
+                                    </div>
+                                    <div class="flex row gap-5" onclick="ignore_file('{{_.drive_id}}','{{folder}}','{{x.reason}}')">
+                                        <div class="flex align-center">
+                                            <img src="/static?file_name=trash-regular-24.png" alt="">
+                                        </div>
+                                        <div>
+                                            Ignore
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div><em>All Files are in correct format</em></div>
+            {% endif %}
+        </div>
+        
+        {% set temp_data = data[folder].missing_category %}
+        {% if temp_data %}
+        <div class="flex column gap-10">
+            <strong id="insight_heading">Missing Categories from Folder data </strong>
+            <div class="flex row gap-5" style="flex-wrap: wrap;">
+                {% for x in temp_data %}
+                    <span class="category_box flex row align-center" style="gap:7px">
+                        <span>{{x}}</span>
+                        <span>|</span>
+                        <span>Total Files : {{temp_data[x]}}</span>
+                    </span>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% set temp_data = data[folder].ignored_files %}
+        {% if temp_data %}
+        <div class="flex column gap-10">
+            <strong>Ignored Files : </strong>
+            <div class="flex row gap-5">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Owner</th>
+                            <th>Size</th>
+                            <th>Reason</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for x in temp_data %}
+                    {% set _ = data[folder].file_data[x.id] %}
+                        <tr class="files_data">
+                            <td class="file_name_col">
+                                <div class="flex row align-center">
+                                    <img src="{{_.icon}}" alt="">
+                                    <span class="file_name">
+                                        {{_.name}}
+                                    </span>
+                                </div>
+                            </td>
+                            <td class="file_owner">{{_.email}}</td>
+                            <td class="file_owner">{{_.size}}</td>
+                            <td class="file_owner"><em>{{x.reason}}</em></td>
+                            <td class="file_more_options_">
+                                <div class="flex align-center"><img src="/static?file_name=dots-regular-24.png" alt=""></div>
+                                <div id="options_list" class="column">
+                                    <a href="{{_.link}}" target="_blank" id="view">
+                                        <div class="flex row gap-5">
+                                            <div class="flex align-center">
+                                                <img src="/static?file_name=view-regular-24.png" alt="">
+                                            </div>
+                                            <div>
+                                                View
+                                            </div>
+                                        </div>
+                                    </a>
+                                    <div class="flex row gap-5" onclick="include_file('{{_.drive_id}}','{{folder}}')">
+                                        <div class="flex align-center">
+                                            <img src="/static?file_name=x-regular-24.png" alt="">
+                                        </div>
+                                        <div>
+                                            Include
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+    {% endif %}
+    </div>
+
+{% endfor %}
+

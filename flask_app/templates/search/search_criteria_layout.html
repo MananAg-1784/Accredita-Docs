@@ -1,0 +1,114 @@
+{% extends 'search/search_layout.html' %}
+{% block body %}
+{% for x in criteria_data %}
+    <div class="flex column gap-10 data_item" id="{{x.criteria}}">
+        <div class="flex column gap-5 data_details">
+            <div class="flex row" style="justify-content: space-between;">
+                <div class="flex row gap-5">
+                    <strong>Criteria : </strong>
+                    <span class="name"><strong>{{x.criteria}}</strong></span>
+                </div>
+                {% set count = namespace(value=0) %}
+                {% for j in x.category %}
+                    {% set count.value = count.value + data[j.category]|length %}
+                {% endfor %}
+                {% if count.value > 0 %}
+                    <div class="flex row gap-10 align-center" id="display_files" onclick="display_files_list('{{x.criteria}}')">
+                        <div>
+                            <span>Files Found : </span>
+                            <span class="files_count">{{count.value}}</span>
+                        </div>
+                        <div class="flex align-center">
+                            <img src="/static?file_name=down-arrow-regular-24.png" alt="">
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+            <div><em>{{x.definition}}</em></div>
+            <div class="flex row gap-5" style="flex-wrap: wrap;">
+                {% for cat in x.category %}
+                    <div class="category_box3">
+                        {{cat.category}} - {{cat.def}}
+                    </div>
+                {% endfor %}
+            </div>
+
+        </div>
+
+        {% set count = namespace(value=0) %}
+        {% for j in x.category %}
+            {% set count.value = count.value + data[j.category]|length %}
+        {% endfor %}
+        {% if count.value == 0 %}
+            <div class="no-files">No files for the Criteria...</div>
+        {% else %}
+            <div class="files_list hide">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Date</th>
+                            <th>Owner</th>
+                            <th>Size</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for j in x.category %}
+                        {% for _ in data[j.category] %}
+                            <tr class="files_data" id="data_item_{{_.data_item}}">
+                                <td class="file_name_col">
+                                    <div class="flex row align-center">
+                                        <img src="{{_.icon}}" alt="">
+                                        <span class="file_name cut-text">
+                                            {{_.name}}
+                                        </span>
+                                    </div>
+                                </td>
+                                <td class="file_time">{{_.time}}</td>
+                                <td class="file_owner">{{_.email}}</td>
+                                <td class="file_size">{{_.size}}</td>
+
+                                <td class="file_more_options_">
+                                    <div class="flex align-center"><img src="/static?file_name=dots-regular-24.png" alt=""></div>
+                                    <div id="options_list" class="column">
+                                        <a href="{{_.link}}" target="_blank" id="view">
+                                            <div class="flex row gap-5">
+                                                <div class="flex align-center">
+                                                    <img src="/static?file_name=view-regular-24.png" alt="">
+                                                </div>
+                                                <div>
+                                                    View
+                                                </div>
+                                            </div>
+                                        </a>
+                                        <div class="flex row gap-5" onclick="rename_file({{_.data_item}},'{{_.name}}')">
+                                            <div class="flex align-center">
+                                                <img src="/static?file_name=rename-regular-24.png" alt="">
+                                            </div>
+                                            <div>
+                                                Rename
+                                            </div>
+                                        </div>
+                                        <div class="flex row gap-5" onclick="delete_file({{_.data_item}})">
+                                            <div class="flex align-center">
+                                                <img src="/static?file_name=trash-regular-24.png" alt="">
+                                            </div>
+                                            <div>
+                                                Delete
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+
+
+                            </tr>
+                        {% endfor %}
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </div>
+{% endfor %}
+{% endblock %}

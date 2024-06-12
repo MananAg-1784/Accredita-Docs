@@ -1,0 +1,64 @@
+
+<div style="font-size: var(--side-heading); font-weight: 600;">
+    <em>Update Folder List</em>
+</div>
+
+<div class="flex column gap-10">
+    <div id="add_folder" class="flex column gap-10" style="font-size: var(--paragraph);">
+        {% for folder in folders %}
+            <div class="flex row gap-10 align-center" id="folder_options">
+                <div class="flex row gap-10 align-center">
+                    <span>Folder : </span>
+                    <select name="select_folder" class="select_folder" onchange="selected_folders(this.parentNode)">
+                        <option value="1" disabled="">Select Folder</option>
+                        <option value="{{folder['folder_name']}}">{{folder['folder_name']}}</option>
+                    </select>
+                </div>
+                <div class="flex row gap-10 align-center">
+                    <span>Accredition : </span>
+                    <select name="select_accredition" onchange="selected_folders(this.parentNode)" class="select_accredition">
+                        {% for acc in accredition %}
+                            {% if acc == folder['accredition'] %}
+                                <option value="{{acc}}" selected>{{acc}}</option>
+                            {% else %}
+                                <option value="{{acc}}">{{acc}}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+                <div onclick="remove_folder(this.parentNode)" class="flex">
+                    <img src="/static?file_name=x-circle-regular-24.png">
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    
+    <div class="flex column gap-5" style="margin-top:10px !important;">
+        <div class="flex row gap-25">
+            <div onclick="add_folder()" class="flex row align-center gap-5" style="font-size: var(--side-heading);" id="add_folder_button">
+                <img src="/static?file_name=plus-circle-regular-24.png" alt="">
+                <span><em>Add New folder</em></span>
+            </div>
+            {% if owner %}
+            <div onclick="create_folder()" class="flex row align-center gap-5" style="font-size: var(--side-heading);" id="add_folder_button">
+                <img src="/static?file_name=plus-circle-regular-24.png" alt="">
+                <span><em>Create New folder</em></span>
+            </div>
+            {% endif %}
+        </div>
+        {% if not owner %}
+            <div>
+                <em>Note : You can only share and add Folders from your Shared Drive</em>
+            </div>
+        {% else %}
+            <div>
+                <em>Note : You can Share and add from all Folders within your Drive</em>
+            </div>
+        {% endif %}
+    </div>
+    <div id="category_options">
+    </div>
+    <div id="update-folder-submit"  style="margin-top:10px;">
+        <button onclick="submit_folder_list()">Update List</button>
+    </div>
+</div>

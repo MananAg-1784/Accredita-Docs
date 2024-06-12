@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% block body %} 
+<link rel="stylesheet" href="{{url_for('static', filename='css/search.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/multi-select.css')}}">
+
+<section class="flex row">
+    <div class="flex column gap-10" id="search_options">
+        <div class="flex column gap-10" style="padding-bottom: 150px !important; height:max-content;">
+            <div class="flex column">
+                <div style="font-size: 20px; font-weight: 600;">Search for Files</div>
+                <div>
+                    <em>Select and categories files.</em>
+                </div>
+            </div>
+            <div class="flex column gap-5">
+                <label for="select_accredition">Accredition</label>
+                <select name="select_accredition" id="select_accredition" onchange="add_acc_data(this.value)">
+                    <option value="-1" disabled selected>Select Accredition</option>
+                    {% for acc in accreditions %}
+                        <option value="{{acc}}">{{acc}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="flex column gap-5">
+                <label for="select_academic_year">Academic Year</label>
+                <div class="flex column">
+                    <div class="flex row gap-5" style="width: 80%">
+                        <select name="select_academic_year" id="select_academic_year" onchange="change_academic_year()" style="width:45%;">
+                            <option value="-1" disabled selected>Academic Year</option>
+                        </select>
+                        <select name="select_academic_month" id="select_academic_month" onchange="display_academic_year_details()" style="width:55%;">
+                            <option value="-1" disabled selected>Month</option>
+                        </select>
+                    </div>
+                    <div id="academic_year_details"></div>
+                </div>
+            </div>
+            <div class="flex column gap-5">
+                <label for="select_folder">Choose Folders</label>
+                <select name="select_folder" multiple id="select_folder" onchange="change_category()" >
+                    
+                </select>
+            </div>
+            <div class="flex column gap-10">
+                <div>Categorise files using</div>
+                <div class="flex column gap-5">
+                    <div class="flex row gap-10 align-center">
+                        <input type="radio" name="select_filter" id="checked" onchange="radio_check(1)" class="radio_category">
+                        <label for="select_category">Category</label>
+                    </div>
+                    <select name="select_category" multiple id="select_category" onchange="check_options('select_category')" >    
+                    </select>
+                </div>
+                <div class="flex column gap-5">
+                    <div class="flex row gap-10 align-center">
+                        <input type="radio" name="select_filter" onchange="radio_check(0)" class="radio_criteria">
+                        <label for="select_criteria">Criteria</label>
+                    </div>
+                    <select name="select_criteria" multiple id="select_criteria" onchange="check_options('select_criteria')">
+                        
+                    </select>
+                </div>
+            </div>
+            <div>
+                <button onclick="search()" style="padding: 5px 20px;">Search</button>
+            </div>         
+        </div>
+    </div>
+    <div class="flex column" id="display" style="padding: 0px !important">
+        <div id="flash_messages" class="flex row gap-10 align-center"></div>
+        <div id="stream_update" class="flex row gap-10 align-center"></div>
+        {% if user.privilage == 'admin' %}
+            <div id="insights" style="margin-top: 5px !important;">
+                <div id="insights_display_button" onclick="display_insights()" class="flex row align-center">
+                    <img src="/static?file_name=highlight-regular-24.png" alt="">
+                    <span>Insights</span>
+                </div>
+                <div class="flex column gap-15 hide" id="insights_data">
+                        <div id="insights_display_button" onclick="reset_insights()" class="flex row align-center">
+                            <img src="/static?file_name=search-regular-24.png" alt="">
+                            <span>Results</span>
+                        </div>
+                        <div class="flex row" style="justify-content: space-between; padding: 0 20px;">
+                            <div class="flex row gap-10 align-center">
+                                <label for="select_folder_" style="font-size: 17px;">Select Folder : </label>
+                                <select name="select_folder_" id="select_folder_" onchange="get_folder_insights()">
+                                    {% for folder in folders %}
+                                    <option value="{{folder.folder|replace(' ', '')}}">{{folder.folder}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="flex row gap-15">
+                                <div onclick="get_insights()" class="flex row align-center gap-10"  style="cursor:pointer; font-size: var(--side-heading);">
+                                    <img src="/static?file_name=refresh-regular-24.png" alt="">
+                                    <em>
+                                        Refresh
+                                    </em>
+                                </div>
+                                <div onclick="reset_insights()" class="flex align-center">
+                                    <img src="/static?file_name=exit-regular-24.png" alt="">
+                                </div>
+                            </div>
+                        </div>
+                        <div id="insights_data_">
+                            <span class="display_error" style="padding: 0px 20px; font-size: 17px;">Refresh, to Load Insights</span>
+                        </div>
+                </div>
+            </div>
+        {% endif %}
+        <div id="search_results" class="flex column" style="margin-top: 5px !important;">
+            <em style="padding: 0 20px;">Search Results...</em>
+        </div>
+        <div id="display_options_response" class="hide">
+        </div>
+    </div>
+</section>
+<div id="overlay">
+</div>
+{% endblock %}
+{% block scripts %} 
+<script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+<script>
+    var accreditions = {{accreditions| tojson}};
+    var folders = {{folders| tojson}};
+    const months = ["January","February","March","April","May","June","July","August","September","October","November","December"]
+    var category = {};
+    var criteria = {};
+    const acc_start_mnth = 4;
+
+</script>
+<script src="{{url_for('static', filename='scripts/search/main.js' )}}"></script>
+<script src="{{url_for('static', filename='scripts/search/select_tags.js' )}}"></script>
+{% if user.privilage == 'admin' %}
+<script src="{{url_for('static', filename='scripts/search/insights.js' )}}"></script>
+{% endif %}
+{% endblock %}
+
