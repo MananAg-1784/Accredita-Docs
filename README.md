@@ -148,7 +148,7 @@ gunicorn -k gevent -w 1 run:app
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE] file for more details.
+This project is licensed under the MIT License. See the LICENSE file for more details.
 
 ## Contact 
 
