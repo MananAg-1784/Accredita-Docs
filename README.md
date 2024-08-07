@@ -141,9 +141,9 @@ WSGIServer(('0.0.0.0', _port_ ), app, log=None).serve_forever()
 Open the terminal in the same directory as the `run.py`
 
 ```bash
-python -m run
+python -m run   # In Windows
 or
-gunicorn -k gevent -w 1 run:app
+gunicorn -k gevent -w 1 run:app   # In Ubuntu
 ```
 
 ## License
@@ -152,7 +152,7 @@ This project is licensed under the MIT License. See the LICENSE file for more de
 
 ## Contact 
 
-For any questions or feedback, please contact at `mananagarwal1784@gmail.com`.
+For any questions or feedback, please contact at `mananagarwal1784@gmail.com` <br>
 Visit my [Website](https://manan-portfolio.ddns.net/) to check out my works
 
 
