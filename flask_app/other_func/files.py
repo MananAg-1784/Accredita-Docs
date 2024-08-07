@@ -230,7 +230,7 @@ def check_actitivty(drive_id, folder_id, lastCheckTime, user, forceExec=False):
                         print("Exception while entering record for activity.. ", e)
 
         else:
-            datetime_object = datetime.strptime(lastCheckTime, "%Y-%m-%d %H:%M:%S")
+            datetime_object = datetime.strptime(lastCheckTime, "%Y-%m-%d %H:%M:%S.%f")
             today_date_ = date_now(onlyDate = False)
             if forceExec or (datetime_object < today_date_ and today_date_ - datetime_object >= timedelta(minutes = 15)):
                 print("Checking activity...")
