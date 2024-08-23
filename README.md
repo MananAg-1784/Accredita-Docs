@@ -9,6 +9,7 @@ This web application focuses on efficient document classification and retrieval 
     * [Document Classification and Storage](#document-classification-and-storage)
     * [File Management](#file-management)
     * [Administrative Update](#administrative-updates)
+3. [Database Structure](#database-structure)
 4. [Installation](#installation)
 5. [Usage](#usage)
 6. [License](#license)
@@ -64,6 +65,10 @@ Each user is associated with a department under which they perform all tasks. Us
 - Update, create and modify list of folders, categories and criterias
 - Manage access roles to the users of the department
 - Keep track of all the activity of files
+
+## Database Structure
+
+![Database Schema Diagram](/database_schema.png)
 
 ## Installation
 
